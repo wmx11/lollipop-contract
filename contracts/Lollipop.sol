@@ -19,14 +19,13 @@ contract Lollipop is
 {
     uint256 public constant TOKEN_SUPPLY = 1000000000;
     uint256 public constant MAX_FEE = 10;
-    string public constant TOKEN_NAME = "LoIterationEight";
-    string public constant TOKEN_SYMBOL = "LIE";
+    string public constant TOKEN_NAME = "Lollipop";
+    string public constant TOKEN_SYMBOL = "LOLLY";
 
     uint256 public buyFee = 3;
     uint256 public sellFee = 5;
 
     address public feesReceiver;
-    address public feeToken; // WBNB
     address public pair;
 
     IUniswapV2Router02 public router; // PCS Router
@@ -39,7 +38,6 @@ contract Lollipop is
     event SetInitialized();
     event SetSellFee(uint256 fee);
     event SetBuyFee(uint256 fee);
-    event SetFeeToken(address _address);
     event SetPair(address _address);
     event SetRouter(address _address);
     event SetFeesReceiver(address _address);
@@ -75,7 +73,6 @@ contract Lollipop is
         _mint(msg.sender, TOKEN_SUPPLY * 10 ** decimals());
         feesReceiver = _feesReceiver;
         router = IUniswapV2Router02(_router);
-        feeToken = router.WETH();
         pair = IUniswapV2Factory(router.factory()).createPair(
             address(this),
             router.WETH()
@@ -229,7 +226,7 @@ contract Lollipop is
     }
 
     /** OWNER METHODS */
-    
+
     function setSellFee(uint256 fee) external onlyOwner {
         require(fee <= MAX_FEE, "Sell fee cannot be larger than MAX_FEE");
         sellFee = fee;
@@ -240,13 +237,6 @@ contract Lollipop is
         require(fee <= MAX_FEE, "Buy fee cannot be larger than MAX_FEE");
         buyFee = fee;
         emit SetBuyFee(fee);
-    }
-
-    function setFeeToken(
-        address _address
-    ) external onlyOwner validAddress(_address) {
-        feeToken = _address;
-        emit SetFeeToken(_address);
     }
 
     function setPair(
